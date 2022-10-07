@@ -19,6 +19,13 @@ func NewOrderController(svc *services.OrderSvc) *OrderController {
 	}
 }
 
+// GetOrders godoc
+// @Summary Get all of orders
+// @Description Get details of all orders
+// @Tags orders
+// @Accept json
+// @Produce json
+// @Router /orders [get]
 func (s *OrderController) GetAllOrders(ctx *gin.Context) {
 	response := s.svc.GetAllOrders()
 	WriteJsonRespnse(ctx, response)
