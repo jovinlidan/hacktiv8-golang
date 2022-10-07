@@ -101,10 +101,12 @@ func IndexHandler(w http.ResponseWriter, r *http.Request){
 
 
 func main(){
+	http.Handle("/asset/",
+        http.StripPrefix("/asset/",
+            http.FileServer(http.Dir("asset"))))
 	http.HandleFunc("/", IndexHandler)
 
-
-	ticker := time.NewTicker(5*time.Second)
+	ticker := time.NewTicker(15*time.Second)
 	
 	go func ()  {
 		for {

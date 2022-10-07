@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="refresh" content="5" />
+    <meta http-equiv="refresh" content="15" />
     <title>Assignment 3</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,7 +18,7 @@
         font-family: "Roboto", sans-serif;
       }
       body {
-        background: #050505;
+        background: #092043;
       }
       .container {
         display: flex;
@@ -30,13 +30,67 @@
       p {
         margin: 0;
       }
+
+      h1 {
+        font-size: 40px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      .card {
+        width: 200px;
+        height: 250px;
+        background-color: white;
+        border-radius: 20px;
+        padding: 20px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .card > .title {
+        color: black;
+        font-weight: bold;
+        font-size: 32px;
+      }
+
+      .card > .value {
+        color: black;
+        text-transform: capitalize;
+      }
+
+      .content {
+        display: flex;
+      }
+
+      .card img {
+        width: 150px;
+        height: 150px;
+      }
+
+      .divider {
+        margin-left: 8px;
+        margin-right: 8px;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <h1>Jovin Lidan</h1>
-      <p>Wind {{.Wind}}</p>
-      <p>Water {{.Water}}</p>
+      <div class="content">
+        <div class="card">
+          <p class="title">Wind</p>
+          <img src="/asset/wind.jpeg" alt="Water" />
+          <p class="value">{{.Wind}}</p>
+        </div>
+        <div class="divider"></div>
+        <div class="card">
+          <p class="title">Water</p>
+          <img src="/asset/water.jpeg" alt="Water" />
+          <p class="value">{{.Water}}</p>
+        </div>
+      </div>
     </div>
   </body>
 </html>
