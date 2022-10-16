@@ -108,3 +108,66 @@ func TestProductservice_CreateProduct_ServerError(t *testing.T) {
 	assert.EqualValues(t, "something went wrong", err.Message())
 	assert.EqualValues(t, "server_error", err.Error())
 }
+
+// Tugas Positif Case
+
+func TestProductservice_UpdateProduct_Success(t *testing.T) {
+	product_domain.ProductDomain = &productDomainMock{}
+
+	requestBody := &product_domain.Product{
+		Id : 1,
+		Name:  "Product Test2",
+		Price: 20.20,
+		Stock: 10,
+	}
+
+	expectedVal := &product_domain.Product{
+		Id:        1,
+		Name:      "Product Test2",
+		Price:     20.20,
+		Stock:     10,
+		CreatedAt: tm,
+	}
+
+	updateProduct = func(p *product_domain.Product) (*product_domain.Product, error_utils.MessageErr) {
+		return expectedVal, nil
+	}
+
+	product, err := ProductService.UpdateProduct(requestBody)
+
+	assert.Nil(t, err)
+
+	assert.NotNil(t, product)
+
+	assert.EqualValues(t, expectedVal.Id, product.Id)
+	assert.EqualValues(t, expectedVal.Name, product.Name)
+	assert.EqualValues(t, expectedVal.Price, product.Price)
+	assert.EqualValues(t, expectedVal.Stock, product.Stock)
+}
+
+// Tugas Negatif Case
+
+func TestProductservice_UpdateProduct_ServerError(t *testing.T) {
+	product_domain.ProductDomain = &productDomainMock{}
+
+	updateProduct = func(p *product_domain.Product) (*product_domain.Product, error_utils.MessageErr) {
+		return nil, error_utils.NewInternalServerErrorr("something went wrong")
+	}
+
+	requestBody := &product_domain.Product{
+		Id:        1,
+		Name:      "Product Test2",
+		Price:     20.20,
+		Stock:     10,
+		CreatedAt: tm,
+	}
+
+	product, err := ProductService.UpdateProduct(requestBody)
+
+	assert.NotNil(t, err)
+	assert.Nil(t, product)
+
+	assert.EqualValues(t, 500, err.Status())
+	assert.EqualValues(t, "something went wrong", err.Message())
+	assert.EqualValues(t, "server_error", err.Error())
+}

@@ -182,3 +182,108 @@ func TestProductController_CreateProduct_ServerError(t *testing.T) {
 	assert.EqualValues(t, "server_error", errData.ErrError)
 	assert.EqualValues(t, 500, errData.Status())
 }
+
+
+// Tugas Positif Case
+func TestProductController_UpdateProduct_Success(t *testing.T) {
+	product_service.ProductService = &productServiceMock{}
+
+	requestBody := `
+		{
+			"id" : 1,
+			"name": "Product Test2",
+			"price": 50.50,
+			"stock": 100
+		}
+	`
+
+	expectedVal := &product_domain.Product{
+		Id:        1,
+		Name:      "Product Test2",
+		Price:     50.50,
+		Stock:     100,
+		CreatedAt: tm,
+	}
+
+	updateProduct = func(p *product_domain.Product) (*product_domain.Product, error_utils.MessageErr) {
+		return expectedVal, nil
+	}
+
+	req := httptest.NewRequest(http.MethodPut, "/products", bytes.NewBufferString(requestBody))
+
+	router := gin.Default()
+
+	gin.SetMode(gin.TestMode)
+
+	rr := httptest.NewRecorder()
+
+	router.PUT("/products", UpdateProduct)
+
+	router.ServeHTTP(rr, req)
+
+	result := rr.Result()
+
+	data, err := ioutil.ReadAll(result.Body)
+
+	defer result.Body.Close()
+
+	require.Nil(t, err)
+
+	var product product_domain.Product
+
+	err = json.Unmarshal(data, &product)
+
+	assert.Nil(t, err)
+	assert.NotNil(t, product)
+
+	assert.EqualValues(t, expectedVal.Id, product.Id)
+	assert.EqualValues(t, expectedVal.Name, product.Name)
+	assert.EqualValues(t, expectedVal.Price, product.Price)
+	assert.EqualValues(t, expectedVal.Stock, product.Stock)
+}
+
+// Tugas Negatif Case
+func TestProductController_UpdateProduct_ServerError(t *testing.T) {
+	product_service.ProductService = &productServiceMock{}
+
+	requestBody := `
+		{
+			"id" : 1,
+			"name": "Product Test2",
+			"price": 50.50,
+			"stock": 100
+		}
+	`
+
+	updateProduct = func(p *product_domain.Product) (*product_domain.Product, error_utils.MessageErr) {
+		return nil, error_utils.NewInternalServerErrorr("something went wrong")
+	}
+	req := httptest.NewRequest(http.MethodPut, "/products", bytes.NewBufferString(requestBody))
+
+	router := gin.Default()
+
+	gin.SetMode(gin.TestMode)
+
+	rr := httptest.NewRecorder()
+
+	router.PUT("/products", UpdateProduct)
+
+	router.ServeHTTP(rr, req)
+
+	result := rr.Result()
+
+	data, err := ioutil.ReadAll(result.Body)
+
+	defer result.Body.Close()
+
+	require.Nil(t, err)
+
+	var errData error_utils.MessageErrData
+
+	err = json.Unmarshal(data, &errData)
+
+	assert.Nil(t, err)
+	assert.EqualValues(t, "something went wrong", errData.ErrMessage)
+	assert.EqualValues(t, "server_error", errData.ErrError)
+	assert.EqualValues(t, 500, errData.Status())
+}
